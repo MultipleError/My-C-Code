@@ -1,0 +1,177 @@
+#include "stdafx.h"
+#include <stdio.h>
+#include "string.h"
+#include "time.h"
+#include "math.h"
+#include "stdlib.h"
+#include <windows.h>
+
+#define WORDS 79399
+char dictionary[WORDS][20];
+char yourWord[10];
+char yourLetters[10];
+
+int count(char *string, char c);
+
+int fileRead()
+{
+	long int a = 0;
+	FILE * fp;
+
+	fp = fopen("C:\\Users\\Owner\\Desktop\\College\\Programming Assingments\\dictionary.txt", "r");
+
+	if (fp == NULL)
+	{
+
+		printf("Unable to open file, please make sure you have entered the correct address!");
+		return 0;
+	}
+	else{
+		while (!feof(fp))
+		{
+			fscanf(fp, "%s\n", dictionary[a]);
+			a++;
+		}
+		fclose(fp);
+	}
+	return 1;
+}
+
+int spelling()
+{
+	for (int c = 0; c<WORDS; c++)
+	{
+		if (!strcmp(yourWord, dictionary[c]))
+		{
+			printf("Congratz! You scored %d points!\n", strlen(yourWord));
+
+			return 1;
+		}
+	}
+	puts("I'm sorry but thats not a word!\n");
+	return 0;
+}
+
+int countdown()
+{
+	int seconds = 30;
+
+	do
+	{
+		printf("You have %d seconds to think!\r", seconds);
+		fflush(stdout);
+		Sleep(1000);
+		seconds--;
+	} while (seconds != 0);
+	if (seconds = 1)
+	{
+		printf("!!!!!!!!!!!Times up nerd!!!!!!!!!!!\a\n");
+	}
+	return 1;
+}
+int longest()
+{
+	char best[10];
+	int matches = 0, highest = 0, a = 0, b = 0, c = 0, tcount = 0, wcount = 0;
+	char temp[10];
+
+	strcpy(temp, yourLetters);
+
+	for (a = 0; a<WORDS; a++)
+	{
+		matches = 0;
+		c = strlen(dictionary[a]);
+
+		for (b = 0; b<c; b++)
+		{
+			tcount = 0;
+			wcount = 0;
+			tcount = count(temp, dictionary[a][b]);
+			wcount = count(dictionary[a], dictionary[a][b]);
+
+			if ((tcount > 0) && (tcount == wcount))
+			{
+				matches = matches + 1;
+			}
+			else
+			{
+				matches = 0;
+				break;
+			}
+		}
+
+		if (matches > highest)
+		{
+			strcpy(best, dictionary[a]);
+			highest = matches;
+		}
+	}
+
+	printf("The longest word possible was %s \n", best);
+
+	if (strcmp(yourWord, best) == 0)
+	{
+		printf("You guessed the longest word!\n");
+	}
+
+	return 0;
+}
+
+void main(void)
+{
+	fileRead();
+	srand(time(NULL));
+	char vowel[] = "aeiou";
+	char consonant[] = "qwrtypsdfghjklzxcvbnm";
+	int a, b, c = 0;
+	int d = 1;
+
+	printf(" Countdown Game: Press 1 for a vowel and 2 for a consonant.\n------------------------------------------------------------\n");
+
+	do
+	{
+		scanf_s("%d", &a);
+		if (a == 1)
+		{
+			b = rand() % 5;
+			yourLetters[c] = vowel[b];
+			printf("Letter %d = %c\n", d, yourLetters[c]);
+		}
+		else if (a == 2)
+		{
+			b = rand() % 21;
+			yourLetters[c] = consonant[b];
+			printf("Letter %d = %c\n", d, yourLetters[c]);
+		}
+		else
+		{
+			printf("Please press either 1 or 2\n");
+			c--;
+			d--;
+		}
+		d++;
+		c++;
+		fflush(stdin);
+	} while (c < 9);
+
+	printf("Your Letters are %s\n", yourLetters);
+
+	countdown();
+
+	printf("Enter your longest word now using the letters provided: ");
+	scanf_s("%s", yourWord, sizeof yourWord);
+
+	spelling();
+	longest();
+}
+
+int count(char *string, char c)
+{
+	int a = 0, count = 0, b = 0;
+	b = strlen(string);
+	for (a = 0; a<b; a++)
+	{
+		if (string[a] == c) count++;
+	}
+	return count;
+}
